@@ -11,5 +11,6 @@ input/
 build/
 build-*/
 docgen_tmp/
+*.pyc
 
 # End of https://www.toptal.com/developers/gitignore/api/zig

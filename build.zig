@@ -68,21 +68,38 @@ pub fn build(b: *Build) !void {
     // options.addOption([]const u8, "DAY", DAY);
     // options.addOption([]const u8, "INPUT_DIR", INPUT_DIR);
     // exe.root_module.addOptions("config", options);
+    const aoclib = b.createModule(.{
+        .root_source_file = b.path(
+            try fs.path.join(
+                b.allocator,
+                &[_][]const u8{ SRC_DIR, "aoclib.zig" },
+            ),
+        ),
+    });
+    exe.root_module.addAnonymousImport("problem", .{ .root_source_file = b.path(
+        try fs.path.join(
+            b.allocator,
+            &[_][]const u8{
+                SRC_DIR,
+                YEAR,
+                try fmt.allocPrint(
+                    b.allocator,
+                    "day{s}.zig",
+                    .{DAY},
+                ),
+            },
+        ),
+    ), .imports = &.{.{
+        .name = "aoclib",
+        .module = aoclib,
+    }} });
     exe.root_module.addAnonymousImport(
-        "problem",
+        "aoclib",
         .{
             .root_source_file = b.path(
                 try fs.path.join(
                     b.allocator,
-                    &[_][]const u8{
-                        SRC_DIR,
-                        YEAR,
-                        try fmt.allocPrint(
-                            b.allocator,
-                            "day{s}.zig",
-                            .{DAY},
-                        ),
-                    },
+                    &[_][]const u8{ SRC_DIR, "aoclib.zig" },
                 ),
             ),
         },
@@ -148,6 +165,17 @@ pub fn build(b: *Build) !void {
         .target = target,
         .optimize = optimize,
     });
+    problem_unit_tests.root_module.addAnonymousImport(
+        "aoclib",
+        .{
+            .root_source_file = b.path(
+                try fs.path.join(
+                    b.allocator,
+                    &[_][]const u8{ SRC_DIR, "aoclib.zig" },
+                ),
+            ),
+        },
+    );
     const run_lib_unit_tests = b.addRunArtifact(problem_unit_tests);
     const exe_unit_tests = b.addTest(.{
         .root_source_file = b.path("src/main.zig"),
