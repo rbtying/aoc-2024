@@ -9,6 +9,7 @@ const Allocator = std.mem.Allocator;
 pub fn intsAny(s: []const u8, delimiters: []const u8, allocator: Allocator) !ArrayList(i64) {
     var iter = mem.tokenizeAny(u8, s, delimiters);
     var l = ArrayList(i64).init(allocator);
+    errdefer l.deinit();
 
     while (iter.next()) |v| {
         try l.append(try std.fmt.parseInt(i64, v, 10));
