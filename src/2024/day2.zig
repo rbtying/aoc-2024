@@ -5,16 +5,6 @@ const mem = std.mem;
 input: []const u8,
 allocator: mem.Allocator,
 
-fn sign(i: i64) i64 {
-    if (i < 0) {
-        return -1;
-    } else if (i > 0) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
 fn isSafe(values: std.ArrayList(i64)) bool {
     var it = mem.window(i64, values.items, 2, 1);
     var safe = true;
@@ -22,7 +12,7 @@ fn isSafe(values: std.ArrayList(i64)) bool {
 
     while (it.next()) |v| {
         const d = v[1] - v[0];
-        const sig_d = sign(d);
+        const sig_d = aoclib.sign(d);
         if (signum == null) {
             signum = sig_d;
         }
