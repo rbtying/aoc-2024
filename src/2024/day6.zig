@@ -111,11 +111,11 @@ pub fn part2(this: *const @This()) !?i64 {
                 loop = true;
                 break;
             }
-            try visited.put(p, true);
             const next = loc.add(dir);
 
             if (grid.get(next) == '#' or next.eql(obs)) {
                 dir = dir.rotate_right();
+                try visited.put(p, true);
             } else {
                 loc = next;
             }
