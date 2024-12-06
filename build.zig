@@ -311,6 +311,7 @@ fn generateSourceFileIfNotPresent(allocator: Allocator) !void {
         const template =
             \\const std = @import("std");
             \\const mem = std.mem;
+            \\const aoclib = @import("aoclib");
             \\
             \\input: []const u8,
             \\allocator: mem.Allocator,

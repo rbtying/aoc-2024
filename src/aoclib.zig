@@ -194,6 +194,10 @@ pub fn P2D(comptime T: type) type {
 
         const Self = @This();
 
+        pub fn eql(self: Self, other: P2D(T)) bool {
+            return self.r == other.r and self.c == other.c;
+        }
+
         pub fn add(self: Self, b: P2D(T)) P2D(T) {
             return .{ .r = self.r + b.r, .c = self.c + b.c };
         }
@@ -208,6 +212,18 @@ pub fn P2D(comptime T: type) type {
 
         pub fn min(self: Self, b: P2D(T)) P2D(T) {
             return .{ .r = if (self.r < b.r) self.r else b.r, .c = if (self.c < b.c) self.c else b.c };
+        }
+
+        pub fn matmul(self: Self, m: [2]P2D(T)) P2D(T) {
+            return .{ .r = self.r * m[0].r + self.c * m[1].r, .c = self.r * m[0].c + self.c * m[1].c };
+        }
+
+        pub fn rotate_left(self: Self) P2D(T) {
+            return self.matmul([2]P2D(T){ .{ .r = 0, .c = 1 }, .{ .r = -1, .c = 0 } });
+        }
+
+        pub fn rotate_right(self: Self) P2D(T) {
+            return self.matmul([2]P2D(T){ .{ .r = 0, .c = -1 }, .{ .r = 1, .c = 0 } });
         }
     };
 }
@@ -256,7 +272,7 @@ pub const Grid2D = struct {
         };
     }
 
-    pub fn put(self: Self, p: P2D(i64), v: u8) !void {
+    pub fn put(self: *Self, p: P2D(i64), v: u8) !void {
         try self.grid.put(p, v);
     }
 
