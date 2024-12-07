@@ -302,3 +302,11 @@ pub const Grid2D = struct {
         self.grid.deinit();
     }
 };
+
+pub fn reverseList(comptime T: type, list: *std.ArrayList(T)) void {
+    for (0..list.items.len / 2) |i| {
+        const temp = list.items[i];
+        list.items[i] = list.items[list.items.len - i - 1];
+        list.items[list.items.len - i - 1] = temp;
+    }
+}
