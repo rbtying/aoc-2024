@@ -9,28 +9,25 @@ fn soln(this: *const @This(), p1: bool) !?i64 {
     var grid = try aoclib.Grid2D.init(this.allocator, this.input);
     defer grid.deinit();
 
-    var loc = grid.min_bounds;
     var antennaGroups = std.AutoHashMap(u8, std.ArrayList(aoclib.P2D(i64))).init(this.allocator);
     defer antennaGroups.deinit();
     var antinodes = std.AutoHashMap(aoclib.P2D(i64), bool).init(this.allocator);
     defer antinodes.deinit();
 
-    while (loc.r <= grid.max_bounds.r) : (loc.r += 1) {
-        loc.c = grid.min_bounds.c;
-        while (loc.c <= grid.max_bounds.c) : (loc.c += 1) {
-            const v = grid.get(loc);
-            if (v == 0 or v == '.') {
-                continue;
-            }
+    var gridIter = grid.denseIterator();
 
-            const entry = try antennaGroups.getOrPut(v);
-            if (!entry.found_existing) {
-                entry.value_ptr.* = std.ArrayList(aoclib.P2D(i64)).init(this.allocator);
-                defer entry.value_ptr.*.deinit();
-            }
-
-            try entry.value_ptr.*.append(loc);
+    while (gridIter.next()) |e| {
+        if (e.value == 0 or e.value == '.') {
+            continue;
         }
+
+        const entry = try antennaGroups.getOrPut(e.value);
+        if (!entry.found_existing) {
+            entry.value_ptr.* = std.ArrayList(aoclib.P2D(i64)).init(this.allocator);
+            defer entry.value_ptr.*.deinit();
+        }
+
+        try entry.value_ptr.*.append(e.loc);
     }
 
     var entryIter = antennaGroups.iterator();

@@ -98,7 +98,7 @@ pub fn StringGraph(comptime E: type) type {
             }
         }
 
-        pub fn getAdjacentVertices(self: Self, from: []const u8) std.StringHashMap(E).KeyIterator {
+        pub fn getAdjacentVertices(self: *Self, from: []const u8) std.StringHashMap(E).KeyIterator {
             if (self.inner.get(from)) |v| {
                 return v.keyIterator();
             }
@@ -109,14 +109,14 @@ pub fn StringGraph(comptime E: type) type {
             };
         }
 
-        pub fn getEdgeValue(self: Self, from: []const u8, to: []const u8) ?E {
+        pub fn getEdgeValue(self: *Self, from: []const u8, to: []const u8) ?E {
             if (self.inner.get(from)) |m| {
                 return m.get(to);
             }
             return null;
         }
 
-        pub fn selectSubgraph(self: Self, vertices: [][]const u8) !StringGraph(E) {
+        pub fn selectSubgraph(self: *Self, vertices: [][]const u8) !StringGraph(E) {
             var subgraph = StringGraph(E).init(self.allocator);
             errdefer subgraph.deinit();
 
@@ -139,7 +139,7 @@ pub fn StringGraph(comptime E: type) type {
             return subgraph;
         }
 
-        pub fn topologicalOrdering(self: Self) !std.ArrayList([]const u8) {
+        pub fn topologicalOrdering(self: *Self) !std.ArrayList([]const u8) {
             var indegree = std.StringHashMap(usize).init(self.allocator);
             defer indegree.deinit();
 
@@ -276,29 +276,56 @@ pub const Grid2D = struct {
         };
     }
 
+    const DenseGridIterator = struct {
+        loc: P2D(i64),
+        grid: *Grid2D,
+
+        pub fn next(self: *DenseGridIterator) ?struct { loc: P2D(i64), value: u8 } {
+            if (self.loc.r > self.grid.max_bounds.r) {
+                return null;
+            }
+
+            const l = self.loc;
+            const v = self.grid.get(l);
+
+            self.loc.c += 1;
+            if (self.loc.c > self.grid.max_bounds.c) {
+                self.loc.c = 0;
+                self.loc.r += 1;
+            }
+
+            return .{ .loc = l, .value = v };
+        }
+    };
+
+    pub fn denseIterator(self: *Self) DenseGridIterator {
+        return .{
+            .loc = self.min_bounds,
+            .grid = self,
+        };
+    }
+
     pub fn put(self: *Self, p: P2D(i64), v: u8) !void {
         try self.grid.put(p, v);
     }
 
-    pub fn get(self: Self, p: P2D(i64)) u8 {
+    pub fn get(self: *Self, p: P2D(i64)) u8 {
         if (self.grid.get(p)) |v| {
             return v;
         }
         return 0;
     }
 
-    pub fn debug(self: Self) void {
+    pub fn debug(self: *Self) void {
         var loc = self.min_bounds;
 
-        while (loc.r <= self.max_bounds.r) {
+        while (loc.r <= self.max_bounds.r) : (loc.r += 1) {
             std.debug.print("\n", .{});
-            loc.c = 0;
-            while (loc.c <= self.max_bounds.c) {
+            loc.c = self.min_bounds.c;
+            while (loc.c <= self.max_bounds.c) : (loc.c += 1) {
                 const v = self.get(loc);
                 std.debug.print("{c}", .{v});
-                loc.c += 1;
             }
-            loc.r += 1;
         }
     }
 

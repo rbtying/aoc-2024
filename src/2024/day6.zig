@@ -61,30 +61,24 @@ pub fn part2(this: *const @This()) !?i64 {
 
     var start_loc = grid.min_bounds;
     var start_dir = aoclib.UP;
-    var loc = grid.min_bounds;
 
     var possible_rows = std.AutoHashMap(i64, bool).init(this.allocator);
     defer possible_rows.deinit();
     var possible_cols = std.AutoHashMap(i64, bool).init(this.allocator);
     defer possible_cols.deinit();
 
-    while (loc.r <= grid.max_bounds.r) {
-        loc.c = 0;
-        while (loc.c <= grid.max_bounds.c) {
-            const c = grid.get(loc);
-            if (c == '^') {
-                start_loc = loc;
-                start_dir = aoclib.UP;
-                try grid.put(loc, '.');
-            } else if (c == '#') {
-                try possible_cols.put(loc.c - 1, true);
-                try possible_cols.put(loc.c + 1, true);
-                try possible_rows.put(loc.r - 1, true);
-                try possible_rows.put(loc.r + 1, true);
-            }
-            loc.c += 1;
+    var gridIter = grid.denseIterator();
+    while (gridIter.next()) |entry| {
+        if (entry.value == '^') {
+            start_loc = entry.loc;
+            start_dir = aoclib.UP;
+            try grid.put(entry.loc, '.');
+        } else if (entry.value == '#') {
+            try possible_cols.put(entry.loc.c - 1, true);
+            try possible_cols.put(entry.loc.c + 1, true);
+            try possible_rows.put(entry.loc.r - 1, true);
+            try possible_rows.put(entry.loc.r + 1, true);
         }
-        loc.r += 1;
     }
 
     var path = try visitGraph(start_loc, start_dir, &grid, this.allocator);
@@ -101,7 +95,7 @@ pub fn part2(this: *const @This()) !?i64 {
         var visited = std.AutoHashMap([2]aoclib.P2D(i64), bool).init(this.allocator);
         errdefer visited.deinit();
 
-        loc = start_loc;
+        var loc = start_loc;
         var dir = start_dir;
         var loop = false;
 
