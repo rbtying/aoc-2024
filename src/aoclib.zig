@@ -202,6 +202,10 @@ pub fn P2D(comptime T: type) type {
             return .{ .r = self.r + b.r, .c = self.c + b.c };
         }
 
+        pub fn sub(self: Self, b: P2D(T)) P2D(T) {
+            return .{ .r = self.r - b.r, .c = self.c - b.c };
+        }
+
         pub fn scalar_mul(self: Self, b: i64) P2D(T) {
             return .{ .r = self.r * b, .c = self.c * b };
         }
