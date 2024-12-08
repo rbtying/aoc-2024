@@ -41,16 +41,15 @@ fn soln(this: *const @This(), p1: bool) !?i64 {
                 if (loc1.eql(loc2)) {
                     continue;
                 }
-                var delta = loc2.sub(loc1);
+                const delta = loc2.sub(loc1);
 
                 var stk = std.ArrayList([2]aoclib.P2D(i64)).init(this.allocator);
                 defer stk.deinit();
                 try stk.append([2]aoclib.P2D(i64){ loc2, delta });
-                try stk.append([2]aoclib.P2D(i64){ loc1, delta.scalar_mul(-1) });
                 while (stk.items.len > 0) {
                     const l, const d = stk.pop();
                     if (grid.get(l) != 0) {
-                        if (!p1 or (l.sub(d.scalar_mul(2)).eql(loc2) and l.sub(d).eql(loc1))) {
+                        if (!p1 or (l.sub(d.scalar_mul(2)).eql(loc1) and l.sub(d).eql(loc2))) {
                             try antinodes.put(l, true);
                         }
                         const n = l.add(d);
