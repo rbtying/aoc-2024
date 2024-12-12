@@ -37,7 +37,6 @@ def part2(s: str):
     area = defaultdict(int)
 
     components = {}
-    exteriors = defaultdict(set)
 
     for loc, v in grid.dense_iter():
         if loc in components:
@@ -50,13 +49,9 @@ def part2(s: str):
             area[(v, loc)] += 1
             components[n] = loc
 
-            net = []
             for d in CharGrid.FOURWAY:
                 nn = n + d
-                if grid[nn] != v:
-                    exteriors[(v, loc)].add((n, d))
-                    net.append(d)
-                elif nn not in components:
+                if grid[nn] == v and nn not in components:
                     stk.append(nn)
     
     corners = defaultdict(int)
