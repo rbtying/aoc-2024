@@ -74,13 +74,21 @@ class CharGrid:
             key = complex(*key)
         if not isinstance(key, complex):
             raise RuntimeError("invalid key " + key)
+        self.max_r = max(self.max_r, int(key.real))
+        self.min_r = min(self.min_r, int(key.real))
+        self.max_c = max(self.max_c, int(key.imag))
+        self.min_c = min(self.min_c, int(key.imag))
         self.grid[key] = value
     
     def __str__(self):
         p = ""
         for r in range(self.min_r, self.max_r + 1):
             for c in range(self.min_c, self.max_c + 1):
-                p += self.grid[complex(r, c)]
+                v = self.grid[complex(r, c)]
+                if v is not None:
+                    p += v
+                else:
+                    p += ' '
             p += "\n"
         return p
 
