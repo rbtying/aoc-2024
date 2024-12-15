@@ -1,11 +1,12 @@
 from typing import Iterable, List, Dict, Union, TypeVar, Generator, Set
 from collections import deque, defaultdict
 from dataclasses import dataclass
+import re
 
 T = TypeVar("T")
 
 def ints(s: str) -> Iterable[int]:
-    return map(int, s.split())
+    return list(map(int, re.findall("(\-?\d+)", s)))
 
 def sign(s: Union[float, int]) -> int:
     if s < 0:
