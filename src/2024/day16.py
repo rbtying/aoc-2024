@@ -64,10 +64,10 @@ def solve(s: str):
     return len(seats), min(v for (l, _), v in dist.items() if l == end_tile)
 
 def part1(s: str):
-    return solve(s)[0]
+    return solve(s)[1]
 
 def part2(s: str):
-    return solve(s)[1]
+    return solve(s)[0]
 
 EXAMPLE = r"""###############
 #.......#....E#
