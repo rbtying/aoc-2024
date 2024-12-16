@@ -27,7 +27,6 @@ def windows(l: Iterable[T], n: int) -> Generator[List[T], None, None]:
 
     yield list(d)
 
-
 class CharGrid:
     DOWN = 1
     UP = -1
