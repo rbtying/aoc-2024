@@ -119,3 +119,43 @@ def rotate_left_2d(a: complex) -> complex:
 
 def rotate_right_2d(a: complex) -> complex:
     return complex(a.imag, -a.real)
+
+def complex_to_ascii(a: complex) -> str:
+    match a:
+        case CharGrid.UP:
+            return '^'
+        case CharGrid.DOWN:
+            return 'v'
+        case CharGrid.LEFT:
+            return '<'
+        case CharGrid.RIGHT:
+            return '>'
+    assert False, f"{a} is not a direction"
+
+def ascii_to_complex(a: str) -> complex:
+    match a:
+        case '^':
+            return CharGrid.UP
+        case 'v':
+            return CharGrid.DOWN
+        case '<':
+            return CharGrid.LEFT
+        case '>':
+            return CharGrid.RIGHT
+    assert False, f"{a} is not a direction"
+
+def project_row(a: complex):
+    if a.real > 0:
+        return CharGrid.DOWN
+    elif a.real < 0:
+        return CharGrid.UP
+    else:
+        return 0
+
+def project_col(a: complex):
+    if a.imag > 0:
+        return CharGrid.RIGHT
+    elif a.imag < 0:
+        return CharGrid.LEFT
+    else:
+        return 0
