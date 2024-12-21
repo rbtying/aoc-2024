@@ -18,11 +18,17 @@ dirkeypad = CharGrid(DIRKEYPAD)
 revdirkeypad = {v: k for (k, v) in dirkeypad.dense_iter()}
 
 @functools.cache
-def h(c, n, nr):
+def h(c, n, nr, isdir=True):
     q = deque()
-    q.append((revdirkeypad[c], ""))
+    if isdir:
+        q.append((revdirkeypad[c], ""))
+    else:
+        q.append((revkeypad[c], ""))
     ans = float('inf')
-    np = revdirkeypad[n]
+    if isdir:
+        np = revdirkeypad[n]
+    else:
+        np = revkeypad[n]
     while q:
         l, p = q.pop()
         if l == np:
@@ -30,8 +36,12 @@ def h(c, n, nr):
             ans = min(ans, v)
             continue
         # skip the gap
-        if dirkeypad[l] == ' ':
-            continue
+        if isdir:
+            if dirkeypad[l] == ' ':
+                continue
+        else:
+            if keypad[l] == ' ':
+                continue
         d = np - l
         r = project_row(d)
         c = project_col(d)
@@ -49,64 +59,24 @@ def g(p, n):
     res = 0
     pos = 'A'
     for b in p:
-        res += h(pos, b, n)
+        res += h(pos, b, n, True)
         pos = b
     return res
 
-@functools.cache
-def f(c, n, nr):
-    q = deque()
-    q.append((revkeypad[c], ""))
-    ans = float('inf')
-    np = revkeypad[n]
-    while q:
-        l, p = q.pop()
-        if l == np:
-            v = g(p + "A", nr)
-            ans = min(ans, v)
-            continue
-        # skip the gap
-        if keypad[l] == ' ':
-            continue
-        d = np - l
-        r = project_row(d)
-        c = project_col(d)
-
-        if r:
-            q.append((l + r, p + complex_to_ascii(r)))
-        if c:
-            q.append((l + c, p + complex_to_ascii(c)))
-
-    return ans
-
-def part1(s):
-    nr = 3
-
+def part1(s, nr=3):
     total = 0
     for code in s.splitlines():
         curr = 'A'
         res = 0
         for n in code:
-            res += f(curr, n, nr)
+            res += h(curr, n, nr + 1, False)
             curr = n
         total += res * int(code[:-1])
 
     return total
 
 def part2(s):
-    nr = 26
-
-    total = 0
-    for code in s.splitlines():
-        curr = 'A'
-        res = 0
-        for n in code:
-            res += f(curr, n, nr)
-            curr = n
-        total += res * int(code[:-1])
-
-    return total
-        
+    return part1(s, nr=26)
 
 EXAMPLE = r"""029A
 980A
