@@ -43,8 +43,8 @@ def h(c, n, nr, isdir=True):
             if keypad[l] == ' ':
                 continue
         d = np - l
-        r = project_row(d)
-        c = project_col(d)
+        r = project_row_norm(d)
+        c = project_col_norm(d)
         if r:
             q.append((l + r, p + complex_to_ascii(r)))
         if c:

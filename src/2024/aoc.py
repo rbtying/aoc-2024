@@ -144,7 +144,7 @@ def ascii_to_complex(a: str) -> complex:
             return CharGrid.RIGHT
     assert False, f"{a} is not a direction"
 
-def project_row(a: complex):
+def project_row_norm(a: complex):
     if a.real > 0:
         return CharGrid.DOWN
     elif a.real < 0:
@@ -152,7 +152,7 @@ def project_row(a: complex):
     else:
         return 0
 
-def project_col(a: complex):
+def project_col_norm(a: complex):
     if a.imag > 0:
         return CharGrid.RIGHT
     elif a.imag < 0:
