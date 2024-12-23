@@ -9,7 +9,7 @@ fn derive(x: i64) i64 {
     var xx = x;
     xx = @mod((xx << 6) ^ xx, 16777216);
     xx = @mod((xx >> 5) ^ xx, 16777216);
-    xx = @mod((xx * 2048) ^ xx, 16777216);
+    xx = @mod((xx << 11) ^ xx, 16777216);
     return xx;
 }
 
